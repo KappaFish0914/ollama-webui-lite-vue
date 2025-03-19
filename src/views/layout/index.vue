@@ -16,6 +16,7 @@
 <script lang="ts" setup>
 import { NSpace, NLayout, NLayoutSider } from 'naive-ui'
 import Sider from '@/components/sider/index.vue';
+import { useStore } from '@/store';
 </script>
 
 <style scoped></style>

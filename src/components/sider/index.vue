@@ -56,9 +56,10 @@
         <hr class=" border-gray-800 mb-2 w-full" />
         <div class="flex flex-col">
           <div class="flex">
-            <input type="file" hidden />
+            <input ref="importFiles" type="file" hidden />
             <button
               class=" flex rounded-md py-3 px-3.5 w-full hover:bg-gray-900 transition"
+              @click="handleImport"
             >
               <div class=" self-center mr-3">
                 <svg
@@ -101,12 +102,16 @@
             </button>
           </div>
         </div>
-          
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
 
+let importFiles = ref()
+function handleImport() {
+  importFiles.value.click()
+}
 </script>
