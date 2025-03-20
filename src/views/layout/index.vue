@@ -5,16 +5,16 @@
         <n-layout-sider>
           <Sider />
         </n-layout-sider>
-        <n-layout>
+        <n-layout-content>
           <router-view />
-        </n-layout>
+        </n-layout-content>
       </n-layout>
     </n-space>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { NSpace, NLayout, NLayoutSider } from 'naive-ui'
+import { NSpace, NLayout, NLayoutSider, NLayoutContent } from 'naive-ui'
 import Sider from '@/components/sider/index.vue';
 import { useStore } from '@/store';
 </script>
