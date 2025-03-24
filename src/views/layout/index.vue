@@ -1,13 +1,15 @@
 <template>
   <div class="layout w-screen h-screen">
     <n-space size="large">
-      <n-layout has-sider>
+      <n-layout has-sider class="w-screen">
         <n-layout-sider>
           <Sider />
         </n-layout-sider>
-        <n-layout-content>
-          <router-view />
-        </n-layout-content>
+        <n-layout>
+          <n-layout-content>
+            <router-view />
+          </n-layout-content>
+        </n-layout>
       </n-layout>
     </n-space>
   </div>

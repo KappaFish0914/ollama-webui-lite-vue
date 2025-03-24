@@ -21,8 +21,8 @@
 <script lang="ts" setup>
 import type { Props } from './types'
 
-const props = withDefaults(defineProps<Props>(), { 
-  messages: [] 
+const props = withDefaults(defineProps<Props>(), {
+  messages: () => [] as string[]
 })
 
 </script>
