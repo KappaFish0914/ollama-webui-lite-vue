@@ -28,5 +28,8 @@ export const useChatStore = defineStore("main", {
     setChatId(chatId: string) {
       this.chatId = chatId;
     },
+    setModels(models: any[]) {
+      this.models = models;
+    },
   },
 });
