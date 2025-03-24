@@ -39,6 +39,8 @@ export async function getModels(url = "", type = "all") {
 export async function sendPrompt(userPrompt, parentId, _chatId) {
   const store = useChatStore()
   const selectedModels = store.selectedModels;
+  const $chats = store.chats
+  const $db = store.db;
 
   await Promise.all(
     selectedModels.map(async (model) => {
@@ -46,7 +48,7 @@ export async function sendPrompt(userPrompt, parentId, _chatId) {
     })
   );
 
-  await chats.set(await $db.getChats());
+  await store.setChats(await $db.getChats());
 	
 }
 
