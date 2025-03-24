@@ -34,7 +34,7 @@
               :disabled="disabled"
               @click="handleClick2"
             >
-            <img src="./deleteModel.svg" class="w-4 h-4" />
+              <img src="./deleteModel.svg" class="w-4 h-4" />
             </button>
           </template>
 
