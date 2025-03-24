@@ -42,8 +42,9 @@ const handleScroll = () => {
   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
 }
 
-const handleTextareaInput = (value: string) => {
+const handleTextareaInput = (e: Event) => {
   const textarea = document.getElementById('chat-textarea') as HTMLTextAreaElement
+  // console.log('handleTextareaInput', textarea, textarea.scrollHeight)
   if (textarea) {
     textarea.style.height = ''
     textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px'
@@ -83,16 +84,15 @@ const handleTextareaInput = (value: string) => {
             @submit.prevent="handleSubmit"
           >
             <div class="flex">
-              <n-input
+              <textarea
                 id="chat-textarea"
-                v-model:value="prompt"
-                type="textarea"
+                v-model="prompt"
                 class="dark:bg-gray-800 dark:text-gray-100 outline-none w-full py-3 px-2 pl-4 rounded-xl resize-none"
                 placeholder="请输入信息"
                 :rows="1"
                 @keypress="handleKeyPress"
-                @update:value="handleTextareaInput"
-              />
+                @input="handleTextareaInput"
+              ></textarea>
 
               <div class="self-end mb-2 flex space-x-0.5 mr-2">
                 <template v-if="messages.length === 0 || messages[messages.length - 1].done">

@@ -2,10 +2,11 @@ import { openDB } from "idb"
 import { useChatStore } from "@/store"
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
-const chatStore = useChatStore()
-const router = useRouter()
-async function getDB() {
+
+export async function getDB() {
   // openDB(数据库名称, 数据库版本号, 配置项)
+  const chatStore = useChatStore()
+  const router = useRouter()
   const DB = await openDB("Chats", 1, {
     // 数据库不存在或版本号发生变化时执行
     upgrade(db) {

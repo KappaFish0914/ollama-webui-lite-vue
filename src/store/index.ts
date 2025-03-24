@@ -1,11 +1,13 @@
+import { db } from './../../../ollama-webui-lite/src/lib/stores/index';
 import { defineStore } from "pinia";
 
 type State = {
   db: any;
   chatId: string;
   chats: any[];
-  models: any[];
-  settings: any[];
+  models: any[]; // 所有可选模型
+  selectedModels: any[]; // 选择的模型
+  settings: any;
   showSettings: boolean;
 };
 
@@ -15,13 +17,17 @@ export const useChatStore = defineStore("main", {
       db: undefined,
       chatId: "",
       chats: [],
-      models: [],
-      settings: [],
-      showSettings: false
+      models: [], // 所有可选模型
+      selectedModels: [], // 选择的模型
+      settings: {}, // 设置
+      showSettings: false // 显示设置
     };
   },
 
   actions: {
+    setDB(db: any) {
+      this.db = db;
+    },
     setChats(chats: any[]) {
       this.chats = chats;
     },
@@ -30,6 +36,9 @@ export const useChatStore = defineStore("main", {
     },
     setModels(models: any[]) {
       this.models = models;
+    },
+    setSelectedModels(model: any[]) {
+      this.selectedModels = model;
     },
   },
 });

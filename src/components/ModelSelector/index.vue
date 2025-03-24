@@ -21,9 +21,9 @@
           </select>
           <template v-if="selectedModelIdx === 0">
             <button
-              :class="['self-center',selectedModelIdx === 0 ? 'mr-3' : 'mr-7', 'disabled:text-gray-600', 'disabled:hover:text-gray-600']"
+              :class="['self-center', selectedModelIdx === 0 ? 'mr-3' : 'mr-7', 'disabled:text-gray-600', 'disabled:hover:text-gray-600']"
               :disabled="selectedModels.length === 3 || disabled"
-              @click="handleClick"
+              @click="handleAdd"
             >
               <img src="./addModel.svg" class="w-4 h-4" />
             </button>
@@ -32,7 +32,7 @@
             <button
               :class="['self-center', 'disabled:text-gray-600', 'disabled:hover:text-gray-600', selectedModelIdx === 0 ? 'mr-3' : 'mr-16']"
               :disabled="disabled"
-              @click="handleClick2"
+              @click="() => handleDelete(selectedModelIdx)"
             >
               <img src="./deleteModel.svg" class="w-4 h-4" />
             </button>
@@ -57,31 +57,46 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useChatStore } from '@/store/index';
 
 const store = useChatStore();
 
 let selectedModels = ref<any[]>([""])
+
 let $models = computed(() => {
   let result = store.models;
-  console.log('$models result', result)
   return result;
 })
+
 let disabled = ref(false)
 
-function handleClick() {
+function handleAdd() {
   if (selectedModels.value.length < 3) {
     selectedModels.value = [...selectedModels.value, ""];
   }
 }
 
-function handleClick2(selectedModelIdx: number) {
+function handleDelete(selectedModelIdx: number) {
   selectedModels.value.splice(selectedModelIdx, 1);
 }
-function saveDefaultModel() {}
 
+watch(() => selectedModels.value, () => {
+  store.setSelectedModels(selectedModels.value)
+}, {
+  deep: true
+})
+/**
+ * @description 设为默认模型
+ */
+function saveDefaultModel() {
+  // TODO 设为默认模型
+}
+/**
+ * @description 展示设置
+ */
 function handleShowSettings() {
+  // TODO 展示设置
   // await showSettings.set(true);
 }
 

@@ -13,8 +13,9 @@
       >
         <MessageInput
           v-model:auto-scroll="autoScroll"
+          v-model:prompt="prompt"
           @submit-prompt="handleSubmitPrompt"
-          @stop-response="handleStopRespose"
+          @stop-response="handleStopResponse"
         ></MessageInput>
       </div>
     </div>
@@ -22,28 +23,106 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed, unref, nextTick } from 'vue';
+import { v4 as uuidv4 } from "uuid";
 import Nav from '@/components/Nav/index.vue';
 import ModelSelector from '@/components/ModelSelector/index.vue';
 import Messages from '@/components/Messages/index.vue';
 import MessageInput from '@/components/MessageInput/index.vue';
-import { getModels } from '@/api/index';
+import { useChatStore } from '@/store';
+import { getModels, sendPrompt } from '@/api/index';
 
+const store = useChatStore();
 
+let $selectedModels = computed(() => {
+  return store.selectedModels;
+})
+let $db = computed(() => {
+  return store.db;
+})
+let $chatId = computed(() => {
+  return store.chatId;
+})
 const autoScroll = ref(true)
 const menuCollapsed = ref(false) // 控制菜单是否收起
 
-let messages = ref([])
+let messages = ref<any[]>([])
 
 let prompt = ref(''); // 输入的字符串
-let history = ref({
+let history = ref<{messages: any; currentId: string | null;}>({
   messages: {},
   currentId: null
 });
-function handleSubmitPrompt() {
-}
 
-function handleStopRespose() {
+let $settings = computed(() => {
+  return store.settings;
+});
+
+async function handleSubmitPrompt(userPrompt: string) {
+  const _chatId = JSON.parse(JSON.stringify(unref($chatId)));
+		console.log("submitPrompt", _chatId);
+    
+
+		if (unref($selectedModels).includes("")) {
+      window.$message.error("请选择模型");
+		} else if (unref(messages).length != 0 && unref(messages).at(-1).done != true) {
+			console.log("wait");
+		} else {
+      let chatTextarea = document.getElementById("chat-textarea");
+      if (chatTextarea) {
+        chatTextarea.style.height = "";  
+      }
+			
+			let userMessageId = uuidv4();
+			let userMessage = {
+				id: userMessageId,
+				parentId: unref(messages).length !== 0 ? unref(messages).at(-1).id : null,
+				childrenIds: [],
+				role: "user",
+				content: userPrompt
+			};
+
+			if (unref(messages).length !== 0) {
+				unref(history).messages[unref(messages).at(-1).id].childrenIds.push(userMessageId);
+			}
+
+			unref(history).messages[userMessageId] = userMessage;
+			unref(history).currentId = userMessageId;
+
+			await nextTick();
+			if (unref(messages).length == 1) {
+				await unref($db).createNewChat({
+					id: _chatId,
+					title: "新对话",
+					models: $selectedModels,
+					options: {
+						seed: unref($settings).seed ?? undefined,
+						temperature: unref($settings).temperature ?? undefined,
+						repeat_penalty: unref($settings).repeat_penalty ?? undefined,
+						top_k: unref($settings).top_k ?? undefined,
+						top_p: unref($settings).top_p ?? undefined,
+						num_ctx: unref($settings).num_ctx ?? undefined,
+						...(unref($settings).options ?? {})
+					},
+					messages: messages,
+					history: history
+				});
+			}
+
+			prompt.value = "";
+
+			setTimeout(() => {
+				window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+			}, 50);
+      
+
+			await sendPrompt(userPrompt, userMessageId, _chatId);
+    }
+}
+/**
+ * @description 停止响应
+ */
+function handleStopResponse() {
 }
 
 onMounted(() => {
