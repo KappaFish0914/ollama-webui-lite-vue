@@ -14,8 +14,9 @@ import { useChatStore } from '@/store';
 
 const store = useChatStore();
 
-onMounted(() => {
-  store.setDB(getDB());
+onMounted(async () => {
+  let db = await getDB();
+  store.setDB(db);
 })
 </script>
 

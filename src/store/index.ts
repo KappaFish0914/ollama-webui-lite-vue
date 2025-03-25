@@ -1,26 +1,27 @@
-import { db } from './../../../ollama-webui-lite/src/lib/stores/index';
+// import { db } from './../../../ollama-webui-lite/src/lib/stores/index';
 import { defineStore } from "pinia";
+import type { State } from './type';
 
-type State = {
-  db: any;
-  chatId: string;
-  chats: any[];
-  models: any[]; // 所有可选模型
-  selectedModels: any[]; // 选择的模型
-  settings: any;
-  showSettings: boolean;
-};
+
 
 export const useChatStore = defineStore("main", {
   state: (): State => {
     return {
       db: undefined,
       chatId: "",
+      title: "", // 当前对话标题
       chats: [],
+      stopResponseFlag: false,
+      autoScroll: true,
       models: [], // 所有可选模型
       selectedModels: [], // 选择的模型
       settings: {}, // 设置
-      showSettings: false // 显示设置
+      showSettings: false, // 显示设置
+      messages: [],
+      history:{ // 聊天记录
+        messages: {},
+        currentId: null
+      }
     };
   },
 
@@ -28,11 +29,21 @@ export const useChatStore = defineStore("main", {
     setDB(db: any) {
       this.db = db;
     },
+    setChatId(chatId: string) {
+      this.chatId = chatId;
+    },
+    setTitle(title: string) {
+      this.title = title;
+    },
     setChats(chats: any[]) {
       this.chats = chats;
     },
-    setChatId(chatId: string) {
-      this.chatId = chatId;
+    
+    setSTopResponseFlag(flag: boolean) {
+      this.stopResponseFlag = flag;
+    },
+    setAutoScroll(flag: boolean) {
+      this.autoScroll = flag;
     },
     setModels(models: any[]) {
       this.models = models;
@@ -40,5 +51,15 @@ export const useChatStore = defineStore("main", {
     setSelectedModels(model: any[]) {
       this.selectedModels = model;
     },
+    setSettings(settings: any) {
+      this.settings = settings;
+    },
+    setMessages(messages: any[]) {
+      this.messages = messages;
+    },
+    setHistory(history: any) {
+      this.history = history;
+    },
+    
   },
 });

@@ -81,8 +81,8 @@ function handleDelete(selectedModelIdx: number) {
   selectedModels.value.splice(selectedModelIdx, 1);
 }
 
-watch(() => selectedModels.value, () => {
-  store.setSelectedModels(selectedModels.value)
+watch(() => selectedModels.value, (newValue) => {
+  store.setSelectedModels([...newValue])
 }, {
   deep: true
 })

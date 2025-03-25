@@ -5,7 +5,7 @@
       <Nav title="聊天"></Nav>
       <ModelSelector></ModelSelector>
       <div class="flex-1 mt-10 w-full flex flex-col overflow-y-auto">
-        <Messages :messages="messages"></Messages>
+        <Messages :messages="$messages"></Messages>
       </div>
       <!-- 输入框容器，使用 left 和 right 来控制宽度，transition 用于菜单收起时的平滑过渡 -->
       <div class="fixed bottom-0 right-0 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 shadow-lg" 
@@ -46,13 +46,31 @@ let $chatId = computed(() => {
 const autoScroll = ref(true)
 const menuCollapsed = ref(false) // 控制菜单是否收起
 
-let messages = ref<any[]>([])
+let $messages = computed(() => {
+  return store.messages;
+})
+
+
 
 let prompt = ref(''); // 输入的字符串
-let history = ref<{messages: any; currentId: string | null;}>({
-  messages: {},
-  currentId: null
-});
+let $history = computed(() => {
+  let history = store.history;
+  if (history.currentId !== null) {
+		let _messages = [];
+
+		let currentMessage = history.messages[history.currentId];
+		while (currentMessage !== null) {
+			_messages.unshift({ ...currentMessage });
+			currentMessage =
+				currentMessage.parentId !== null ? history.messages[currentMessage.parentId] : null;
+		}
+    store.setMessages(_messages);
+	} else {
+    store.setMessages([]);
+	}
+
+  return history;
+})
 
 let $settings = computed(() => {
   return store.settings;
@@ -60,12 +78,15 @@ let $settings = computed(() => {
 
 async function handleSubmitPrompt(userPrompt: string) {
   const _chatId = JSON.parse(JSON.stringify(unref($chatId)));
-		console.log("submitPrompt", _chatId);
+		console.log("handleSubmitPrompt", userPrompt, _chatId);
     
 
-		if (unref($selectedModels).includes("")) {
+		if (
+      unref($selectedModels).includes("") ||
+      unref($selectedModels).length == 0
+    ) {
       window.$message.error("请选择模型");
-		} else if (unref(messages).length != 0 && unref(messages).at(-1).done != true) {
+		} else if (unref($messages).length != 0 && unref($messages).at(-1).done != true) {
 			console.log("wait");
 		} else {
       let chatTextarea = document.getElementById("chat-textarea");
@@ -76,25 +97,27 @@ async function handleSubmitPrompt(userPrompt: string) {
 			let userMessageId = uuidv4();
 			let userMessage = {
 				id: userMessageId,
-				parentId: unref(messages).length !== 0 ? unref(messages).at(-1).id : null,
+				parentId: unref($messages).length !== 0 ? unref($messages).at(-1).id : null,
 				childrenIds: [],
 				role: "user",
 				content: userPrompt
 			};
 
-			if (unref(messages).length !== 0) {
-				unref(history).messages[unref(messages).at(-1).id].childrenIds.push(userMessageId);
+			if (unref($messages).length !== 0) {
+				unref($history).messages[unref($messages).at(-1).id].childrenIds.push(userMessageId);
 			}
 
-			unref(history).messages[userMessageId] = userMessage;
-			unref(history).currentId = userMessageId;
+			unref($history).messages[userMessageId] = userMessage;
+			unref($history).currentId = userMessageId;
+
+      store.setHistory(unref($history))
 
 			await nextTick();
-			if (unref(messages).length == 1) {
+			if (unref($messages).length == 1) {
 				await unref($db).createNewChat({
 					id: _chatId,
-					title: "新对话",
-					models: $selectedModels,
+					title: store.title ? store.title :"新对话",
+					models: unref($selectedModels),
 					options: {
 						seed: unref($settings).seed ?? undefined,
 						temperature: unref($settings).temperature ?? undefined,
@@ -104,8 +127,8 @@ async function handleSubmitPrompt(userPrompt: string) {
 						num_ctx: unref($settings).num_ctx ?? undefined,
 						...(unref($settings).options ?? {})
 					},
-					messages: messages,
-					history: history
+					messages: unref($messages),
+					history: $history
 				});
 			}
 

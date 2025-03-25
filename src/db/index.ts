@@ -1,5 +1,6 @@
-import { openDB } from "idb"
-import { useChatStore } from "@/store"
+import { unref } from "vue";
+import { openDB } from "idb";
+import { useChatStore } from "@/store";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 
@@ -28,7 +29,7 @@ export async function getDB() {
       return await this.db.get("chats", id);
     },
     getChats: async function() {
-      let chats = await this.db.getAllFromIndex("Chats", "timestamp");
+      let chats = await this.db.getAllFromIndex("chats", "timestamp");
       // 数组从后向前重新排列
       chats = chats.map((item, idx) => {
         return {
@@ -39,7 +40,7 @@ export async function getDB() {
       return chats;
     },
     exportChats: async function() {
-      let chats = await this.db.getAllFromIndex("Chats", "timestamp");
+      let chats = await this.db.getAllFromIndex("chats", "timestamp");
       // 数组从后向前重新排列
       chats = chats.map((item, idx) => {
         return chats[chats.length - 1 - idx]
@@ -54,7 +55,7 @@ export async function getDB() {
     },
     addChat: async function (chat: any) {
       await this.db.add("chats", {
-        ...chat
+        ...unref(chat)
       })
     },
     createNewChat: async function (chat: any) {
