@@ -1,4 +1,4 @@
-import { nextTick } from 'vue';
+import { nextTick, unref } from 'vue';
 import { useMessage } from 'naive-ui';
 import { OLLAMA_API_BASE_URL } from "@/constant";
 import { useChatStore } from "@/store";
@@ -131,7 +131,7 @@ async function sendPromptOllama (model: any, userPrompt: string, parentId: strin
       const { value, done } = await reader.read();
       if (done || $stopResponseFlag || _chatId !== $chatId) {
         responseMessage.done = true;
-        store.setMessages($messages)
+        store.setMessages(unref($messages))
         break;
       }
 
@@ -152,7 +152,7 @@ async function sendPromptOllama (model: any, userPrompt: string, parentId: strin
                 continue;
               } else {
                 responseMessage.content += data.message.content;
-                store.setMessages($messages)
+                store.setMessages(unref($messages))
               }
             } else {
               responseMessage.done = true;
@@ -167,7 +167,7 @@ async function sendPromptOllama (model: any, userPrompt: string, parentId: strin
                 eval_count: data.eval_count,
                 eval_duration: data.eval_duration
               };
-              store.setMessages($messages)
+              store.setMessages(unref($messages))
               if ($settings.responseAutoCopy) {
                 copyToClipboard(responseMessage.content);
               }

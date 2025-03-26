@@ -4,6 +4,35 @@ import { useChatStore } from "@/store";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "vue-router";
 
+/**
+ * 移除对象中的所有 Proxy
+ * 因为 indexDB没法存包含 Proxy 的内容
+ * @param obj 需要处理的对象
+ * @returns 处理后的普通对象
+ */
+function removeProxy(obj: any): any {
+  if (obj === null || obj === undefined) return obj;
+  
+  // 处理数组
+  if (Array.isArray(obj)) {
+    return obj.map(item => removeProxy(item));
+  }
+  
+  // 处理对象
+  if (typeof obj === 'object') {
+    const result: any = {};
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        result[key] = removeProxy(obj[key]);
+      }
+    }
+    return result;
+  }
+  
+  // 处理其他类型
+  return obj;
+}
+
 export async function getDB() {
   // openDB(数据库名称, 数据库版本号, 配置项)
   const chatStore = useChatStore()
@@ -54,9 +83,9 @@ export async function getDB() {
       chatStore.setChats(await this.getChats())
     },
     addChat: async function (chat: any) {
-      await this.db.add("chats", {
-        ...unref(chat)
-      })
+      // 移除 Proxy 后再存储
+      const plainChat = removeProxy(chat);
+      await this.db.add("chats", plainChat)
     },
     createNewChat: async function (chat: any) {
       await this.addChat({ ...chat, timestamp: Date.now() })
@@ -65,9 +94,11 @@ export async function getDB() {
     updateChatById: async function(id: string, updated: any) {
       const chat = await this.getChatById(id)
 
+      // 移除 Proxy 后再存储
+      const plainUpdated = removeProxy(updated);
       await this.db.put("chats", {
         ...chat,
-        ...updated,
+        ...plainUpdated,
         timestamp: Date.now()
       })
 

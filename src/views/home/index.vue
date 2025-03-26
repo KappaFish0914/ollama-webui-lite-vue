@@ -78,9 +78,6 @@ let $settings = computed(() => {
 
 async function handleSubmitPrompt(userPrompt: string) {
   const _chatId = JSON.parse(JSON.stringify(unref($chatId)));
-		console.log("handleSubmitPrompt", userPrompt, _chatId);
-    
-
 		if (
       unref($selectedModels).includes("") ||
       unref($selectedModels).length == 0
@@ -114,10 +111,11 @@ async function handleSubmitPrompt(userPrompt: string) {
 
 			await nextTick();
 			if (unref($messages).length == 1) {
-				await unref($db).createNewChat({
+        const newChat = {
 					id: _chatId,
-					title: store.title ? store.title :"新对话",
+					title: store.title ? store.title : "新对话",
 					models: unref($selectedModels),
+					system: unref($settings).system ?? undefined,
 					options: {
 						seed: unref($settings).seed ?? undefined,
 						temperature: unref($settings).temperature ?? undefined,
@@ -129,7 +127,9 @@ async function handleSubmitPrompt(userPrompt: string) {
 					},
 					messages: unref($messages),
 					history: $history
-				});
+				}
+        console.log('newChat', newChat);
+				await unref($db).createNewChat(newChat);
 			}
 
 			prompt.value = "";
