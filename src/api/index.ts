@@ -52,7 +52,6 @@ export async function sendPrompt(userPrompt: string, parentId: string, _chatId: 
       await sendPromptOllama(model, userPrompt, parentId, _chatId);
     })
   );
-  // console.log('sendPrompt', $db, $db.getChats);
   const chats = await $db.getChats()
   await store.setChats(chats);
 	

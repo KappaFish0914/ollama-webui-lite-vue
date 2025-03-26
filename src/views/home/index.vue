@@ -128,7 +128,6 @@ async function handleSubmitPrompt(userPrompt: string) {
 					messages: unref($messages),
 					history: $history
 				}
-        console.log('newChat', newChat);
 				await unref($db).createNewChat(newChat);
 			}
 
@@ -144,8 +143,10 @@ async function handleSubmitPrompt(userPrompt: string) {
 }
 /**
  * @description 停止响应
+ * @todo 停止响应
  */
 function handleStopResponse() {
+  // TODO 通知响应
 }
 
 onMounted(() => {
