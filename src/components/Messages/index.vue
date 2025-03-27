@@ -222,40 +222,14 @@
                             class="invisible group-hover:visible p-1 rounded dark:hover:bg-gray-800 transition"
                             @click="editMessageHandler(message.id)"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-                              />
-                            </svg>
+                            <img :src="editIcon" class="w-4 h-4" />
                           </button>
 
                           <button
                             class="invisible group-hover:visible p-1 rounded dark:hover:bg-gray-800 transition"
                             @click="copyToClipboard(message.content)"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
-                              />
-                            </svg>
+                            <img :src="copyIcon" class="w-4 h-4" />
                           </button>
                         </div>
                       </div>
@@ -297,28 +271,14 @@
                         <div class="w-full">
                           <template v-if="message?.error === true">
                             <div class="flex mt-2 mb-4 space-x-2 border px-4 py-3 border-red-800 bg-red-800/30 font-medium rounded-lg">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="w-5 h-5 self-center"
-                              >
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-                                />
-                              </svg>
-
+                              <img :src="warnIcon" class="w-5 h-5 self-center" />
                               <div class="self-center">
                                 {{ message.content }}
                               </div>
                             </div>
                           </template>
                           <template v-else>
-                            <div v-html="marked(message.content.replace('\\\\', '\\\\\\'))"></div>
+                            <div v-html="marked(message.content ? message.content.replace('\\\\', '\\\\\\') : '')"></div>
                           </template>
 
                           <template v-if="message.done">
@@ -329,18 +289,7 @@
                                     class="self-center"
                                     @click="showPreviousMessage(message)"
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                      class="w-4 h-4"
-                                    >
-                                      <path
-                                        fill-rule="evenodd"
-                                        d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                                        clip-rule="evenodd"
-                                      />
-                                    </svg>
+                                    <img :src="leftIcon" class="w-4 h-4" />
                                   </button>
 
                                   <div class="text-xs font-bold self-center">
@@ -351,18 +300,7 @@
                                     class="self-center"
                                     @click="showNextMessage(message)"
                                   >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                      class="w-4 h-4"
-                                    >
-                                      <path
-                                        fill-rule="evenodd"
-                                        d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                                        clip-rule="evenodd"
-                                      />
-                                    </svg>
+                                    <img :src="rightIcon" class="w-4 h-4" />
                                   </button>
                                 </div>
                               </template>
@@ -372,20 +310,7 @@
                                 class="p-1 rounded dark:hover:bg-gray-800 transition"
                                 @click="editMessageHandler(message.id)"
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="1.5"
-                                  stroke="currentColor"
-                                  class="w-4 h-4"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-                                  />
-                                </svg>
+                                <img :src="editIcon" class="w-4 h-4" />
                               </button>
 
                               <button
@@ -478,6 +403,11 @@ import { marked } from "marked";
 import { useChatStore } from '@/store';
 import { v4 as uuidv4 } from 'uuid';
 import { sendPrompt } from '@/api/index';
+import copyIcon from '@/assets/image/copy.svg';
+import editIcon from '@/assets/image/edit.svg';
+import warnIcon from '@/assets/image/warn.svg';
+import leftIcon from '@/assets/image/left.svg';
+import rightIcon from '@/assets/image/right.svg';
 
 const props = withDefaults(defineProps<Props>(), {
   messages: () => []
@@ -492,13 +422,21 @@ let $chatId = computed(() => {
   return store.chatId;
 })
 
-async function cancelEditMessage(messageId: string) {
+async function cancelEditMessage(messageId: string | null) {
+  if (!messageId) {
+    window.$message.error('messageId 为空');
+    return
+  };
   const history = JSON.parse(JSON.stringify(unref($history)));
   history.messages[messageId].edit = false;
 	history.messages[messageId].editedContent = undefined;
   store.setHistory(unref(history));
 }
-async function confirmEditMessage(messageId: string) {
+async function confirmEditMessage(messageId: string | null) {
+  if (!messageId) {
+    window.$message.error('messageId 为空');
+    return
+  };
   const history = JSON.parse(JSON.stringify(unref($history)));
   history.messages[messageId].edit = false;
 
@@ -532,7 +470,11 @@ async function confirmEditMessage(messageId: string) {
   store.setHistory(unref(history));
 }
 
-async function editMessageHandler(messageId: string) {
+async function editMessageHandler(messageId: string | null) {
+  if (!messageId) {
+    window.$message.error('messageId 为空');
+    return
+  };
   const history = JSON.parse(JSON.stringify(unref($history)));
   
   history.messages[messageId].edit = true;

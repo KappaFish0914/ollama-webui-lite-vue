@@ -51,10 +51,10 @@ export const convertMessagesToHistory = (messages) => {
 	return history;
 };
 
-export const copyToClipboard = (text: string) => {
+export const copyToClipboard = (text: string | null) => {
 	if (!navigator.clipboard) {
 		var textArea = document.createElement("textarea");
-		textArea.value = text;
+		textArea.value = text || "";
 
 		// Avoid scrolling to bottom
 		textArea.style.top = "0";
