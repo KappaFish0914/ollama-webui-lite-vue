@@ -5,7 +5,7 @@
         <button class="flex-grow flex justify-between rounded-md px-3 py-1.5 mt-2 hover:bg-gray-900 transition">
           <div class="flex self-center">
             <div class="self-center mr-3.5">
-              <img src="@/assets/image/ollama.png" class="w-5 invert-[100%] rounded-full" />              
+              <img :src="ollamaLogo" class="w-5 invert-[100%] rounded-full" />              
             </div>
             <div class=" self-center font-medium text-sm">新对话</div>
           </div>
@@ -50,7 +50,167 @@
         </div>
       </div>
       <div class="pl-2.5 my-2 flex-1 flex flex-col space-y-1 overflow-y-auto">
-      </div>
+        <div 
+          v-for="chat in $chats.filter(chat => {
+            if (search === '') return true;
+            return chat.title.toLowerCase().includes(search);
+          })"
+          :key="chat.id"
+          class="w-full pr-2 relative"
+        >
+					<button
+						class=" w-full flex justify-between rounded-md px-3 py-2 hover:bg-gray-900 {chat.id ===
+						$chatId
+							? 'bg-gray-900'
+							: ''} transition whitespace-nowrap text-ellipsis"
+						@click="handleChangeChat"
+					>
+						<div class=" flex self-center flex-1">
+							<div class=" self-center mr-3">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="w-4 h-4"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
+									/>
+								</svg>
+							</div>
+							<div
+								class=" text-left self-center overflow-hidden {chat.id === $chatId
+									? 'w-[120px]'
+									: 'w-[180px]'} "
+							>
+                <template v-if="chatTitleEditId === chat.id">
+                  <input v-model="chatTitle" class=" bg-transparent w-full" />
+                </template>
+								<template v-else>
+                  {chat.title}
+                </template>																
+							</div>
+						</div>
+					</button>
+
+          <template v-if="chat.id === $chatId">
+						<div class=" absolute right-[22px] top-[10px]">
+              <template v-if="chatTitleEditId === chat.id">
+                <div class="flex self-center space-x-1.5">
+									<button
+										class=" self-center hover:text-white transition"
+										@click="editChatTitle(chat.id, chatTitle)"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											viewBox="0 0 20 20"
+											fill="currentColor"
+											class="w-4 h-4"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+												clip-rule="evenodd"
+											/>
+										</svg>
+									</button>
+									<button
+										class=" self-center hover:text-white transition"
+										@click="handleDelete"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											viewBox="0 0 20 20"
+											fill="currentColor"
+											class="w-4 h-4"
+										>
+											<path
+												d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
+											/>
+										</svg>
+									</button>
+								</div>
+              </template>
+							<template v-else-if="chatDeleteId === chat.id">
+                <div class="flex self-center space-x-1.5">
+									<button
+										class=" self-center hover:text-white transition"
+										@click="deleteChat(chat.id)"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											viewBox="0 0 20 20"
+											fill="currentColor"
+											class="w-4 h-4"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+												clip-rule="evenodd"
+											/>
+										</svg>
+									</button>
+									<button
+										class=" self-center hover:text-white transition"
+										@click="() => {
+											chatDeleteId = null;
+										}"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											viewBox="0 0 20 20"
+											fill="currentColor"
+											class="w-4 h-4"
+										>
+											<path
+												d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
+											/>
+										</svg>
+									</button>
+								</div>
+              </template>
+              <template v-else>
+                <div class="flex self-center space-x-1.5">
+									<button
+										class=" self-center hover:text-white transition"
+										@click="() => {
+											chatTitle = chat.title;
+											chatTitleEditId = chat.id;
+										}"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke-width="1.5"
+											stroke="currentColor"
+											class="w-4 h-4"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+											/>
+										</svg>
+									</button>
+									<button
+										class=" self-center hover:text-white transition"
+										@click="() => {
+											chatDeleteId = chat.id;
+										}"
+									>
+										<img :src="deleteIcon" class="w-4 h-4" />
+									</button>
+								</div>
+              </template>
+						</div>
+					</template>
+				</div>
+			</div>
 
       <div class="px-2.5">
         <hr class=" border-gray-800 mb-2 w-full" />
@@ -58,67 +218,32 @@
           <div class="flex">
             <input ref="importFiles" type="file" hidden />
             <button
-              class=" flex rounded-md mr-1 py-3 px-3.5 w-full hover:bg-gray-900 transition"
+              class=" flex rounded-md py-3 px-3.5 w-full hover:bg-gray-900 transition "
               @click="handleImport"
             >
-              <div class=" self-center mr-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-5 h-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                  />
-                </svg>
+              <div>
+                <div class=" self-center mr-3 inline">
+                  <img :src="importIcon" class="w-5 h-5 inline" />
+                </div>
+                <div class="self-center inline">导入</div>
               </div>
-              <div class="self-center">导入</div>
             </button>
             <button
-              class=" flex rounded-md py-3 px-3.5 w-full hover:bg-gray-900 transition"
+              class=" flex rounded-md py-3 px-3.5 w-full hover:bg-gray-900 transition "
             >
-              <div class=" self-center mr-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-5 h-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                  />
-                </svg>
+              <div>
+                <div class=" self-center mr-3 inline">
+                  <img :src="exportIcon" class="w-5 h-5 inline" />
+                </div>
+                <div class=" self-center inline">导出</div>
               </div>
-              <div class=" self-center">导出</div>
             </button>
           </div>
           <button
 						class=" flex rounded-md my-1 py-3 px-3.5 w-full hover:bg-gray-900 transition"
 					>
 						<div class="mr-3">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="w-5 h-5"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-								/>
-							</svg>
+							<img :src="clearIcon" class="w-5 h-5" />
 						</div>
 						<span>清除对话</span>
 					</button>
@@ -155,10 +280,54 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useChatStore } from '@/store'
+import ollamaLogo from '@/assets/image/ollama.png'
+import deleteIcon from '@/assets/image/delete.svg'
+import importIcon from '@/assets/image/import.svg'
+import exportIcon from '@/assets/image/export.svg'
+import clearIcon from '@/assets/image/clear.svg'
 
-let importFiles = ref()
+const store = useChatStore()
+const importFiles = ref()
+const search = ref('')
+const chatTitleEditId = ref(null)
+const chatDeleteId = ref(null)
+const chatTitle = ref('')
+
+const $chats = computed(() => store.chats)
+const $chatId = computed(() => store.chatId)
+
 function handleImport() {
   importFiles.value.click()
+}
+
+function loadChat(id: string) {
+  store.setChatId(id)
+}
+
+function editChatTitle(id: string, title: string) {
+  chatTitleEditId = null;
+  chatTitle = "";
+  store.updateChatTitle(id, title)
+}
+
+function deleteChat(id: string) {
+  store.deleteChat(id)
+}
+
+function handleChangeChat() {
+  if (chat.id !== chatTitleEditId) {
+    chatTitleEditId = null;
+    chatTitle = "";
+  }
+
+  if (chat.id !== $chatId) {
+    loadChat(chat.id);
+  }
+}
+function handleDelete() {
+  chatTitleEditId = null;
+  chatTitle = "";
 }
 </script>

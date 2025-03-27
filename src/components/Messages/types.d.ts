@@ -1,3 +1,7 @@
+import type { Message } from '@/store/type.d.ts';
+
+export type { Message };
+
 export type Props = { 
-  messages: string[]
+  messages: Array<Message>
 }

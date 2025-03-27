@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { NButton, NInput } from 'naive-ui'
+import { ref } from 'vue'
+import { NButton } from 'naive-ui'
 
 interface Props {
   autoScroll?: boolean

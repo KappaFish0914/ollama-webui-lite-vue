@@ -126,7 +126,7 @@ async function handleSubmitPrompt(userPrompt: string) {
 						...(unref($settings).options ?? {})
 					},
 					messages: unref($messages),
-					history: $history
+					history: unref($history)
 				}
 				await unref($db).createNewChat(newChat);
 			}

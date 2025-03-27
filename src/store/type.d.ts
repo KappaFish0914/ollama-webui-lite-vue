@@ -1,7 +1,30 @@
+export type Message = {
+  id: string | null;
+  parentId: string | null;
+  role: string | null;
+  content: string | null;
+  model: string | null;
+  edit: boolean;
+  done: boolean;
+  error: boolean;
+  files: Array<{
+    type: string;
+    url: string;
+  }>;
+  info: {
+    eval_count: number;
+    total_duration: number;
+    load_duration: number;
+    prompt_eval_count: number;
+    prompt_eval_duration: number;
+  }
+}
 export type History = {  // 聊天记录
-  messages: any;
+  messages: Record<string, Messages>;
   currentId: string | null;
 };
+
+
 export type State = {
   db: any;
   chatId: string;
