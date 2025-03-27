@@ -1,6 +1,6 @@
 # 20250327
 - chore: 图片问题
-
+- chore: 新增 changelog.md
 # 20250326
 - feat: indexDB无法直接处理Proxy后的对象
 
